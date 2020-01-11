@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package arithmetic;
+
+service Arithmetic {
+	rpc Add(Input) returns (Result) {}
+	rpc AddMultiple(InputMultiple) returns (Result) {}
+	rpc Subtract(Input) returns (Result) {}
+	rpc SubtractMultiple(InputMultiple) returns (Result) {}
+	rpc Multiply(Input) returns (Result) {}
+	rpc MultiplyMultiple(InputMultiple) returns (Result) {}
+	rpc Divide(Input) returns (Result) {}
+	rpc DivideMultiple(InputMultiple) returns (Result) {}
+}
+
+message Input {
+	double x = 1;
+	double y = 2;
+}
+
+message InputMultiple {
+	repeated double x = 1;
+}
+
+message Result {
+	double result = 1;
+}
