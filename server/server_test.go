@@ -1,27 +1,27 @@
 package main
 
 import (
-	"testing"
-	"math"
 	"github.com/google/go-cmp/cmp"
+	"math"
+	"testing"
 )
 
 // Define constants to use with test cases
 const (
-	x float64 = 7.7
-	y float64 = 5.5
-	tolerance = 0.0000000001
+	x         float64 = 7.7
+	y         float64 = 5.5
+	tolerance         = 0.0000000001
 )
 
 // Borrowed code to test floating point numbers with tolerance
 func testResult(result, expect float64) bool {
 	opt := cmp.Comparer(func(result, expect float64) bool {
-	    diff := math.Abs(result - expect)
-	    mean := math.Abs(result + expect) / 2.0
-	    if math.IsNaN(diff / mean) {
-	        return true
-	    }
-	    return (diff / mean) < tolerance
+		diff := math.Abs(result - expect)
+		mean := math.Abs(result+expect) / 2.0
+		if math.IsNaN(diff / mean) {
+			return true
+		}
+		return (diff / mean) < tolerance
 	})
 	if !cmp.Equal(result, expect, opt) {
 		return false
@@ -40,10 +40,10 @@ func TestAddition(t *testing.T) {
 	}
 }
 
-// Test the "AddSlice" function
-func TestAdditionSlice(t *testing.T) {
+// Test the "AddMultiple" function
+func TestAdditionMultiple(t *testing.T) {
 	inputs := []float64{0.1, 0.2, 0.3, 0.4, 0.5}
-	result := AddSlice(inputs)
+	result := AddMultiple(inputs)
 	expect := 1.5
 
 	if !testResult(result, expect) {
@@ -61,10 +61,10 @@ func TestSubtraction(t *testing.T) {
 	}
 }
 
-// Test the "SubtractSlice" function
-func TestSubtractionSlice(t *testing.T) {
+// Test the "SubtractMultiple" function
+func TestSubtractionMultiple(t *testing.T) {
 	inputs := []float64{0.1, 0.2, 0.3, 0.4, 0.5}
-	result := SubtractSlice(inputs)
+	result := SubtractMultiple(inputs)
 	expect := -1.3
 
 	if !testResult(result, expect) {
@@ -82,10 +82,10 @@ func TestMultiplication(t *testing.T) {
 	}
 }
 
-// Test the "MultiplySlice" function
-func TestMultiplicationSlice(t *testing.T) {
+// Test the "MultiplyMultiple" function
+func TestMultiplicationMultiple(t *testing.T) {
 	inputs := []float64{0.1, 0.2, 0.3, 0.4, 0.5}
-	result := MultiplySlice(inputs)
+	result := MultiplyMultiple(inputs)
 	expect := 0.0012
 
 	if !testResult(result, expect) {
@@ -103,10 +103,10 @@ func TestDivision(t *testing.T) {
 	}
 }
 
-// Test the "DivideSlice" function
-func TestDivisionSlice(t *testing.T) {
+// Test the "DivideMultiple" function
+func TestDivisionMultiple(t *testing.T) {
 	inputs := []float64{0.1, 0.2, 0.3, 0.4, 0.5}
-	result := DivideSlice(inputs)
+	result := DivideMultiple(inputs)
 	expect := 8.333333333333333
 
 	if !testResult(result, expect) {
