@@ -19,6 +19,7 @@ var (
 type ArithmeticServer struct {
 }
 
+// Add (gRPC) accepts protobuf input, processes via Add method and returns result via gRPC
 func (s *ArithmeticServer) Add(ctx context.Context, input *pb.Input) (*pb.Result, error) {
 	log.Printf("Received Add gRPC request with input: %v", input)
 	result := Add(input.X, input.Y)
@@ -29,6 +30,7 @@ func (s *ArithmeticServer) Add(ctx context.Context, input *pb.Input) (*pb.Result
 	}, nil
 }
 
+// AddMultiple (gRPC) accepts protobuf input, processes via AddMultiple method and returns result via gRPC
 func (s *ArithmeticServer) AddMultiple(ctx context.Context, inputMultiple *pb.InputMultiple) (*pb.Result, error) {
 	log.Printf("Received AddMultiple gRPC request with input: %v", inputMultiple)
 	result := AddMultiple(inputMultiple.X)
@@ -39,6 +41,7 @@ func (s *ArithmeticServer) AddMultiple(ctx context.Context, inputMultiple *pb.In
 	}, nil
 }
 
+// Subtract (gRPC) accepts protobuf input, processes via Subtract method and returns result via gRPC
 func (s *ArithmeticServer) Subtract(ctx context.Context, input *pb.Input) (*pb.Result, error) {
 	log.Printf("Received Subtract gRPC request with input: %v", input)
 	result := Subtract(input.X, input.Y)
@@ -49,6 +52,7 @@ func (s *ArithmeticServer) Subtract(ctx context.Context, input *pb.Input) (*pb.R
 	}, nil
 }
 
+// SubtractMultiple (gRPC) accepts protobuf input, processes via SubtractMultiple method and returns result via gRPC
 func (s *ArithmeticServer) SubtractMultiple(ctx context.Context, inputMultiple *pb.InputMultiple) (*pb.Result, error) {
 	log.Printf("Received SubtractMultiple gRPC request with input: %v", inputMultiple)
 	result := SubtractMultiple(inputMultiple.X)
@@ -59,6 +63,7 @@ func (s *ArithmeticServer) SubtractMultiple(ctx context.Context, inputMultiple *
 	}, nil
 }
 
+// Multiply (gRPC) accepts protobuf input, processes via Multiply method and returns result via gRPC
 func (s *ArithmeticServer) Multiply(ctx context.Context, input *pb.Input) (*pb.Result, error) {
 	log.Printf("Received Multiply gRPC request with input: %v", input)
 	result := Multiply(input.X, input.Y)
@@ -69,6 +74,7 @@ func (s *ArithmeticServer) Multiply(ctx context.Context, input *pb.Input) (*pb.R
 	}, nil
 }
 
+// MultiplyMultiple (gRPC) accepts protobuf input, processes via MultiplyMultiple method and returns result via gRPC
 func (s *ArithmeticServer) MultiplyMultiple(ctx context.Context, inputMultiple *pb.InputMultiple) (*pb.Result, error) {
 	log.Printf("Received MultiplyMultiple gRPC request with input: %v", inputMultiple)
 	result := MultiplyMultiple(inputMultiple.X)
@@ -79,6 +85,7 @@ func (s *ArithmeticServer) MultiplyMultiple(ctx context.Context, inputMultiple *
 	}, nil
 }
 
+// Divide (gRPC) accepts protobuf input, processes via Divide method and returns result via gRPC
 func (s *ArithmeticServer) Divide(ctx context.Context, input *pb.Input) (*pb.Result, error) {
 	log.Printf("Received Divide gRPC request with input: %v", input)
 	result := Divide(input.X, input.Y)
@@ -89,6 +96,7 @@ func (s *ArithmeticServer) Divide(ctx context.Context, input *pb.Input) (*pb.Res
 	}, nil
 }
 
+// DivideMultiple (gRPC) accepts protobuf input, processes via DivideMultiple method and returns result via gRPC
 func (s *ArithmeticServer) DivideMultiple(ctx context.Context, inputMultiple *pb.InputMultiple) (*pb.Result, error) {
 	log.Printf("Received DivideMultiple gRPC request with input: %v", inputMultiple)
 	result := DivideMultiple(inputMultiple.X)
@@ -114,16 +122,17 @@ func main() {
 
 	// Start the server
 	if err := gRPCServer.Serve(netListener); err != nil {
-		log.Fatalf("failed to serve: %s", err)
+		log.Fatalf("Failed to start server: %s", err)
 	}
 
 }
 
+// getNetListener creates a listener on specified port and host
 func getNetListener(port uint) net.Listener {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-		panic(fmt.Sprintf("failed to listen: %v", err))
+		log.Fatalf("Failed to listen: %v", err)
+		panic(fmt.Sprintf("Failed to listen: %v", err))
 	}
 
 	return lis
