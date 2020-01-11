@@ -8,9 +8,12 @@ ENV GOOS=linux
 RUN go get -d ./... && \
 	go test ./... && \
 	go build -a -installsuffix cgo -o /assets/server /src/server && \
-	chmod +x /assets/server
+	go build -a -installsuffix cgo -o /assets/client /src/client && \
+	chmod +x /assets/server && \
+	chmod +x /assets/client
 
-FROM scratch as server
+FROM scratch as arithmetic
 
-COPY --from=builder /assets/server /opt/server/
-CMD ["/opt/server/server"]
+COPY --from=builder /assets/server /
+COPY --from=builder /assets/client /
+CMD ["/server"]
