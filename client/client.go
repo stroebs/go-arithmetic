@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"google.golang.org/grpc"
-	pb "../proto"
+	pb "github.com/stroebs/go-arithmetic/proto"
 )
 
 var (
