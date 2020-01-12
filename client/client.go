@@ -25,7 +25,7 @@ func processArgs(args []string, client pb.ArithmeticClient) {
 		if err != nil {
 			fmt.Printf("Invalid parameter at position %v: %v\n", (i + 1), v)
 			fmt.Printf("Please only input numbers\n")
-			os.Exit(1)
+			return
 		}
 		inputArgs = append(inputArgs, it)
 	}
@@ -67,12 +67,29 @@ func processArgs(args []string, client pb.ArithmeticClient) {
 		}
 	default:
 		fmt.Println("Please specify operation as one of: add, subtract, multiply, divide")
-		os.Exit(1)
+		return
 	}
 }
 
 // Main function
 func main() {
+    // Parse CLI flags
+    flag.Usage = func() {
+        fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:\n", os.Args[0])
+        fmt.Fprintf(flag.CommandLine.Output(), "First argument is the operator: add, subtract, divide, multiply\n")
+        fmt.Fprintf(flag.CommandLine.Output(), "Examples:\n"+
+            "add 1 2 3 4 5\n"+
+            "subtract 5 7 9 1\n"+
+            "multiply 2.7 2.8 9.9\n"+
+            "divide 9 4.1 7.777 9.999\n")
+        flag.PrintDefaults()
+    }
+    flag.Parse()
+    if len(os.Args) < 2 {
+        fmt.Println("One of add, subtract, multiply or divide sub-commands are required")
+        os.Exit(1)
+    }
+
 	// Connect to the gRPC server
 	server := fmt.Sprintf("%s:%d", *host, *port)
 	conn, e := grpc.Dial(server, grpc.WithInsecure())
@@ -81,22 +98,6 @@ func main() {
 	}
 	defer conn.Close()
 	client := pb.NewArithmeticClient(conn)
-
-	// Parse CLI flags
-	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:\n", os.Args[0])
-		fmt.Fprintf(flag.CommandLine.Output(), "First argument is the operator: add, subtract, divide, multiply\n")
-		fmt.Fprintf(flag.CommandLine.Output(), "Examples:\n"+
-			"add 1 2 3 4 5\n"+
-			"subtract 5 7 9 1\n"+
-			"multiply 2.7 2.8 9.9\n"+
-			"divide 9 4.1 7.777 9.999\n")
-		flag.PrintDefaults()
-	}
-	flag.Parse()
-	if len(os.Args) < 2 {
-		fmt.Println("One of add, subtract, multiply or divide sub-commands are required")
-		os.Exit(1)
-	}
+    // Process CLI arguments
 	processArgs(flag.Args(), client)
 }
