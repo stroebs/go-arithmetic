@@ -146,7 +146,7 @@ func Add(x, y float64) float64 {
 // AddSlice takes n float64 inputs as a slice and returns the sum of them
 func AddMultiple(inputs []float64) float64 {
 	sum := inputs[0]
-	for _, input := range inputs[1:len(inputs)] {
+	for _, input := range inputs[1:] {
 		sum += input
 	}
 	return sum
@@ -160,7 +160,7 @@ func Subtract(x, y float64) float64 {
 // SubtractSlice takes n inputs as a slice and returns the ordered subtraction from left to right
 func SubtractMultiple(inputs []float64) float64 {
 	sum := inputs[0]
-	for _, input := range inputs[1:len(inputs)] {
+	for _, input := range inputs[1:] {
 		sum -= input
 	}
 	return sum
@@ -174,7 +174,7 @@ func Multiply(x, y float64) float64 {
 // MultiplySlice takes n float64 inputs as slice and returns the ordered multiplication from left to right
 func MultiplyMultiple(inputs []float64) float64 {
 	sum := inputs[0]
-	for _, input := range inputs[1:len(inputs)] {
+	for _, input := range inputs[1:] {
 		sum *= input
 	}
 	return sum
@@ -188,7 +188,7 @@ func Divide(x, y float64) float64 {
 // DivideSlice takes n float64 inputs as slice and returns the ordered division from left to right
 func DivideMultiple(inputs []float64) float64 {
 	sum := inputs[0]
-	for _, input := range inputs[1:len(inputs)] {
+	for _, input := range inputs[1:] {
 		sum /= input
 	}
 	return sum
