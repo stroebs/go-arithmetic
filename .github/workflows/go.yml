@@ -27,8 +27,5 @@ jobs:
     - name: Run tests
       run: go test ./...
 
-    - name: Build Server
-      run: go build -v server/
-
-    - name: Build Client
-      run: go build -v client/
+    - name: Build Server & Client
+      run: go build -v ./...
