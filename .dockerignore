@@ -1,3 +1,6 @@
 Dockerfile
 server/server
 vendor/
+tf/
+.github
+.deepsource.toml
