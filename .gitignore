@@ -16,3 +16,10 @@ vendor/
 
 # Server binary
 server/server
+
+# Terraform
+.terraform
+.env
+*.tfplan
+*.tfstate
+*.tfstate.backup
