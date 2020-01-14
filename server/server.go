@@ -6,15 +6,16 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
-	"google.golang.org/grpc"
-
 	pb "github.com/stroebs/go-arithmetic/proto"
+	"google.golang.org/grpc"
 )
 
 var (
-	port = flag.Uint("port", 4040, "Server listen port")
+	port = flag.Uint64("port", 4040, "Server listen port")
 )
 
 type ArithmeticServer struct {
@@ -109,13 +110,27 @@ func (s *ArithmeticServer) DivideMultiple(ctx context.Context, inputMultiple *pb
 }
 
 func main() {
+	// Load dotenv
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file")
+	}
+	portEnv, exists := os.LookupEnv("SERVER_LISTEN_PORT")
+	if exists {
+		it, err := strconv.ParseUint(portEnv, 10, 32)
+		if err == nil {
+			*port = it
+		} else {
+			log.Println("Could not parse SERVER_LISTEN_PORT")
+		}
+	}
 	// Parse command-line flags
 	flag.Parse()
 	// Add datetime and line logging to logger
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	//Initialise server
-	log.Printf("Starting server on tcp/%v", int(*port))
+	log.Printf("Starting server on tcp/%v", *port)
 	netListener := getNetListener(*port)
 	gRPCServer := grpc.NewServer()
 	arithmeticServer := &ArithmeticServer{}
@@ -129,8 +144,8 @@ func main() {
 }
 
 // getNetListener creates a listener on specified port and host
-func getNetListener(port uint) net.Listener {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+func getNetListener(port uint64) net.Listener {
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", port))
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 		panic(fmt.Sprintf("Failed to listen: %v", err))
