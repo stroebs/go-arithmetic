@@ -1,6 +1,10 @@
 ---
-name: Go
-on: [push]
+name: Go Staging
+on:
+  push:
+    branches-ignore:
+      - master
+
 jobs:
 
   test:
@@ -48,8 +52,16 @@ jobs:
       - name: Build Server & Client
         run: go build -v ./...
 
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: stroebs/go-arithmetic
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          tags: ${{ github.sha }}
+
   deploy:
-    name: Deploy
+    name: Deploy to Staging
     runs-on: ubuntu-latest
     steps:
 
@@ -70,10 +82,126 @@ jobs:
           location_zone: ${{ secrets.LOCATION_ZONE }}
           cluster_name: ${{ secrets.CLUSTER_NAME }}
 
-      - name: Test Kubeconfig File
+      - name: Render Deployment YAML
+        uses: nowactions/envsubst@v1
+        with:
+          input: ./ci/deployment-staging.yml.tmpl
+          output: ./ci/deployment-staging.yml
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+
+      - name: yaml-lint
+        uses: ibiqlik/action-yamllint@master
+        with:
+          file_or_dir: ./ci/deployment-staging.yml
+
+      - name: Deploy to staging
         uses: docker://bitnami/kubectl:latest
         with:
-          args: get namespaces
+          args: apply -f ./ci/deployment-staging.yml
         env:
-          # Setting the environment variable KUBECONFIG sets the default config file that kubectl looks for.
+          KUBECONFIG: '/github/workspace/.kube/config'
+
+---
+name: Go Prod
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Set up Go 1.13
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.13
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v1
+
+      - name: Get dependencies
+        run: |
+          go get -v -t -d ./...
+
+      - name: Run tests
+        run: go test ./...
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Set up Go 1.13
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.13
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v1
+
+      - name: Get dependencies
+        run: |
+          go get -v -t -d ./...
+
+      - name: Run tests
+        run: go test ./...
+
+      - name: Build Server & Client
+        run: go build -v ./...
+
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: stroebs/go-arithmetic
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          tags: latest,${{ github.sha }}
+
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Set up Go 1.13
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.13
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v1
+
+      - name: Get kubeconfig file from GKE
+        uses: machine-learning-apps/gke-kubeconfig@master
+        with:
+          application_credentials: ${{ secrets.APPLICATION_CREDENTIALS }}
+          project_id: ${{ secrets.PROJECT_ID }}
+          location_zone: ${{ secrets.LOCATION_ZONE }}
+          cluster_name: ${{ secrets.CLUSTER_NAME }}
+
+      - name: Render Deployment YAML
+        uses: nowactions/envsubst@v1
+        with:
+          input: ./ci/deployment-production.yml.tmpl
+          output: ./ci/deployment-production.yml
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+
+      - name: yaml-lint
+        uses: ibiqlik/action-yamllint@master
+        with:
+          file_or_dir: ./ci/deployment-production.yml
+
+      - name: Deploy to production
+        uses: docker://bitnami/kubectl:latest
+        with:
+          args: apply -f ./ci/deployment-production.yml
+        env:
           KUBECONFIG: '/github/workspace/.kube/config'
