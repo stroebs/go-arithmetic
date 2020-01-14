@@ -1,0 +1,86 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: go-arithmetic
+  labels:
+    app.kubernetes.io/name: go-arithmetic
+    app.kubernetes.io/part-of: go-arithmetic
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-arithmetic
+spec:
+  ports:
+    - port: 80
+      targetPort: 9000
+      protocol: TCP
+      name: http2
+  selector:
+    app: go-arithmetic
+  type: LoadBalancer
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: go-arithmetic
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: go-arithmetic
+    spec:
+      terminationGracePeriodSeconds: 300
+      nodeSelector:
+        kubernetes.io/os: linux
+      containers:
+        - name: esp
+          image: gcr.io/endpoints-release/endpoints-runtime:1
+          args: [
+            "--http2_port=9000",
+            "--service=go-arithmetic.endpoints.gcp-trial-176209.cloud.goog",
+            "--rollout_strategy=managed",
+            "--backend=grpc://127.0.0.1:8000"
+          ]
+          ports:
+            - containerPort: 9000
+        - name: go-arithmetic
+          image: stroebs/go-arithmetic:latest
+          ports:
+            - containerPort: 8000
+          args: ["/server", "--port", "8000"]
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /wait-shutdown
+
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: go-arithmetic
+  namespace: go-arithmetic
+  labels:
+    app.kubernetes.io/name: go-arithmetic
+    app.kubernetes.io/part-of: go-arithmetic
+spec:
+  limits:
+    - default:
+      min:
+        memory: 90Mi
+        cpu: 100m
+      type: Container
