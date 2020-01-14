@@ -86,3 +86,15 @@ jobs:
           output: ./ci/deployment-staging.yml
         env:
           IMAGE_TAG: ${{ github.sha }}
+
+      - name: yaml-lint
+        uses: ibiqlik/action-yamllint@master
+        with:
+          file_or_dir: ./ci/deployment-staging.yml
+
+      - name: Deploy to staging
+        uses: docker://bitnami/kubectl:latest
+        with:
+          args: apply -f ./ci/deployment-staging.yml
+        env:
+          KUBECONFIG: '/github/workspace/.kube/config'
