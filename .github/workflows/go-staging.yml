@@ -94,6 +94,7 @@ jobs:
 
       - name: Deploy to staging
         uses: docker://bitnami/kubectl:latest
+        needs: build
         with:
           args: apply -f ./ci/deployment-staging.yml
         env:
