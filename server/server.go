@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 
 	pb "github.com/stroebs/go-arithmetic/proto"

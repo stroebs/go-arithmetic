@@ -7,13 +7,13 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/joho/godotenv"
 	pb "github.com/stroebs/go-arithmetic/proto"
 	"google.golang.org/grpc"
 )
 
 var (
-	host = flag.String("host", "localhost", "Server hostname, defaults to localhost")
-	port = flag.Uint("port", 4040, "Server listen port, defaults to 4040")
+	uri = flag.String("uri", "localhost:4040", "Server URI, defaults to localhost:4040")
 )
 
 func processArgs(args []string, client pb.ArithmeticClient) {
@@ -73,31 +73,41 @@ func processArgs(args []string, client pb.ArithmeticClient) {
 
 // Main function
 func main() {
-    // Parse CLI flags
-    flag.Usage = func() {
-        fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:\n", os.Args[0])
-        fmt.Fprintf(flag.CommandLine.Output(), "First argument is the operator: add, subtract, divide, multiply\n")
-        fmt.Fprintf(flag.CommandLine.Output(), "Examples:\n"+
-            "add 1 2 3 4 5\n"+
-            "subtract 5 7 9 1\n"+
-            "multiply 2.7 2.8 9.9\n"+
-            "divide 9 4.1 7.777 9.999\n")
-        flag.PrintDefaults()
-    }
-    flag.Parse()
-    if len(os.Args) < 2 {
-        fmt.Println("One of add, subtract, multiply or divide sub-commands are required")
-        os.Exit(1)
-    }
+	// Parse dotenv
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file")
+	}
+	uriEnv, exists := os.LookupEnv("ARITH_SERVER_URI")
+	if exists {
+		*uri = uriEnv
+	}
+	// Parse CLI flags
+	flag.Usage = func() {
+		fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "First argument is the operator: add, subtract, divide, multiply\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "Examples:\n"+
+			"add 1 2 3 4 5\n"+
+			"subtract 5 7 9 1\n"+
+			"multiply 2.7 2.8 9.9\n"+
+			"divide 9 4.1 7.777 9.999\n")
+		flag.PrintDefaults()
+	}
+	flag.Parse()
+	if len(os.Args) < 2 {
+		fmt.Println("One of add, subtract, multiply or divide sub-commands are required")
+		os.Exit(1)
+	}
 
 	// Connect to the gRPC server
-	server := fmt.Sprintf("%s:%d", *host, *port)
+	fmt.Printf("Connecting to server: %v\n", *uri)
+	server := fmt.Sprintf("%v", *uri)
 	conn, e := grpc.Dial(server, grpc.WithInsecure())
 	if e != nil {
 		panic(e)
 	}
 	defer conn.Close()
 	client := pb.NewArithmeticClient(conn)
-    // Process CLI arguments
+	// Process CLI arguments
 	processArgs(flag.Args(), client)
 }
