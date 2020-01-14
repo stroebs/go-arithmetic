@@ -1,6 +1,8 @@
 # go-arithmetic
 Arithmetic in Go using gRPC  
 
+![](https://github.com/stroebs/go-arithmetic/workflows/Go%20Staging/badge.svg) | ![](https://github.com/stroebs/go-arithmetic/workflows/Go%20Production/badge.svg)  
+
 This is a simple microservice which contains a few methods to perform basic arithmetic  
 The package was designed with TDD, CI/CD and 12factor application principles in mind  
 The microservice utilises gRPC for communication and has been tested locally and with Kubernetes  
