@@ -1,0 +1,26 @@
+# The configuration schema is defined by service.proto file
+# https://github.com/googleapis/googleapis/blob/master/google/api/service.proto
+---
+type: google.api.Service
+config_version: 3
+
+#
+# Name of the service configuration.
+#
+name: go-arithmetic.endpoints.gcp-trial-176209.cloud.goog
+
+#
+# API title to appear in the user interface (Google Cloud Console).
+#
+title: Go-Arithmetic gRPC API
+apis:
+  - name: arithmetic.Arithmetic
+
+#
+# API usage restrictions.
+#
+usage:
+  rules:
+    # Allow all APIs to be called without an API key
+    - selector: "*"
+      allow_unregistered_calls: true

@@ -16,4 +16,4 @@ FROM scratch as arithmetic
 
 COPY --from=builder /assets/server /
 COPY --from=builder /assets/client /
-CMD ["/server"]
+ENTRYPOINT ["/server"]
