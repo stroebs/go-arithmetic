@@ -3,9 +3,9 @@ Arithmetic in Go using gRPC
 
 ![](https://github.com/stroebs/go-arithmetic/workflows/Go%20Staging/badge.svg) | ![](https://github.com/stroebs/go-arithmetic/workflows/Go%20Production/badge.svg)  
 
-This is a simple microservice which contains a few methods to perform basic arithmetic  
-The package was designed with TDD, CI/CD and 12factor application principles in mind  
-The microservice utilises gRPC for communication and has been tested locally and with Kubernetes  
+This is a simple microservice which contains a few methods to perform basic arithmetic.  
+The package was designed with TDD, CI/CD and 12factor application principles in mind.  
+The microservice utilises gRPC for communication and has been tested locally and with Kubernetes.  
 
 ## Endpoints
 
@@ -13,11 +13,11 @@ Two endpoints for the solution are live on GKE:
 * **Staging**: 35.187.4.200:80
 * **Production**: 35.195.132.68:80
 
-Deployment is entirely automated and controlled by Git. A PR is deployed to staging using pull requests and when merged to master, production is deployed. This is handled by GitHub Actions entirely.
+Deployment is entirely automated and controlled by Git. Pull Requests are tested, built and deployed to staging and production is deployed when a push to master occurs. This is all handled by Github Actions.
 
 ## Usage
 
-The client interface is really simple to use. It relies on the server running either locally or inside Docker with port 4040 running on localhost. You can configure the host and port the client uses through command-line arguments or environment variables.  
+The client interface is really simple to use. It relies on the server running locally, inside Docker with port 4040 running on localhost or externally in a Kubernetes cluster. See Endpoints above). You can configure the host and port the client uses through command-line arguments or environment variables.  
 
 It's best to build the client before using these commands for fast testing.  
   
@@ -32,7 +32,7 @@ It's best to build the client before using these commands for fast testing.
 Configuration from `.env`, environment variables and CLI flags are supported.  
 
 ### Server:
-`SERVER_LISTEN_PORT` | `--port`: Important for running in a kubernetes environment for flexibility of port selection.
+`SERVER_LISTEN_PORT` | `--port`: Important for running in a Kubernetes environment for flexibility of port selection.
 
 ### Client:
 `ARITH_SERVER_URI` | `--uri`: This is in the `host:port` format for the gRPC endpoint you wish to use for the client.
@@ -71,7 +71,7 @@ Performing gRPC DivideMultiple for numbers ([1.1 7.1])
 Division result for numbers ([1.1 7.1]): 0.15492957746478875
 ```
 
-**Input:** `./client -uri 35.187.4.200:80 add 1 4 5 6 7`
+**Input:** `./client -uri 35.187.4.200:80 add 1 4 5 6 7`  
 **Output:**
 ```
 Performing gRPC AddMultiple for numbers ([1 4 5 6 7])
@@ -80,7 +80,7 @@ Addition result for numbers ([1 4 5 6 7]): 23
 
 ### Caveats:
 
-* Due to the use of floating point numbers, results may not be exact. No rounding is in place on the server or client size
+* Due to the use of floating point numbers, results may not be exact. No rounding is in place on the server or client side
 * Division by zero will result in infinity and is not handled in this service
 * At present, gRPC API error handling is non-existent
 
@@ -123,7 +123,7 @@ No backing services present or required in this case. This would change if somet
 
 **V. Build, release, run**  
 _Strictly separate build and run stages_  
-The GitHub actions separate the pipeline into test, build and deploy actions. Releasing is handled through a merge to the master branch.
+The Github Actions separate the pipeline into test, build and deploy actions. Releasing is handled through a merge to the master branch.
 
 **VI. Processes**  
 _Execute the app as one or more stateless processes_  
@@ -144,7 +144,7 @@ Graceful shutdown has not been tested at this point but it would be easy to impl
 
 **X. Dev/prod parity**  
 _Keep development, staging, and production as similar as possible_  
-As the GitHub actions pipeline is nearly identical for both staging and production, parity is held through multiple deploys/service updates.
+As the Github Actions pipeline is nearly identical for both staging and production, parity is held through multiple deploys/service updates.
 
 **XI. Logs**  
 _Treat logs as event streams_  
