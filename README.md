@@ -10,8 +10,8 @@ The microservice utilises gRPC for communication and has been tested locally and
 ## Endpoints
 
 Two endpoints for the solution are live on GKE:
-* **Staging**: 35.187.4.200:80
-* **Production**: 35.195.132.68:80
+* **Staging**: <removed>
+* **Production**: <removed>
 
 Deployment is entirely automated and controlled by Git. Pull Requests are tested, built and deployed to staging and production is deployed when a push to master occurs. This is all handled by Github Actions.
 
