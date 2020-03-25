@@ -1,5 +1,6 @@
 # go-arithmetic
 Arithmetic in Go using gRPC  
+This repository served as an interview test task as my first forray into Golang  
 
 ![](https://github.com/stroebs/go-arithmetic/workflows/Go%20Staging/badge.svg) | ![](https://github.com/stroebs/go-arithmetic/workflows/Go%20Production/badge.svg)  
 
@@ -10,8 +11,8 @@ The microservice utilises gRPC for communication and has been tested locally and
 ## Endpoints
 
 Two endpoints for the solution are live on GKE:
-* **Staging**: <removed>
-* **Production**: <removed>
+* **Staging**: (removed)
+* **Production**: (removed)
 
 Deployment is entirely automated and controlled by Git. Pull Requests are tested, built and deployed to staging and production is deployed when a push to master occurs. This is all handled by Github Actions.
 
